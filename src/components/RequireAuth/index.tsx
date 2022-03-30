@@ -1,11 +1,12 @@
-import { useAuth } from 'hooks';
+import { authSelector } from 'features/auth';
+import { useAppSelector } from 'hooks';
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 const RequireAuth: React.FC = ({ children }) => {
-   const { user } = useAuth();
+   const { isLogin } = useAppSelector(authSelector);
    let location = useLocation();
-   if (!user) {
+   if (!isLogin) {
       return <Navigate to="/login" state={{ from: location }} replace />;
    }
 

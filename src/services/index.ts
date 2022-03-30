@@ -1,2 +1,4 @@
 export { addDocument } from './addDocument';
-export { checkUsernameValid } from './checkUsernameValid';
+export { getAllPostsUserFollowing } from './getAllPostsUserFollowing';
+export { getOnlyOneUser } from './getOnlyOneUser';
+export { getUserSuggestion } from './getUserSuggestion';

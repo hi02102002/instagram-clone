@@ -1,19 +1,21 @@
-import { User } from 'firebase/auth';
+import ButtonLoginGoogle from 'components/ButtonLoginGoogle';
+import { authSelector } from 'features/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useFormik } from 'formik';
-import { useAuth } from 'hooks';
+import { useAppSelector } from 'hooks';
 import { IMAGES } from 'images';
+import { auth } from 'lib/firebase';
 import React, { useEffect, useState } from 'react';
-import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
-import { addDocument, checkUsernameValid } from 'services';
+import { addDocument, getOnlyOneUser } from 'services';
 import * as Yup from 'yup';
-import './Auth.styles.css';
+import './Auth.css';
 
 export const Register = React.memo(() => {
-   const { signUp, user } = useAuth();
    const [isLoading, setIsLoading] = useState<boolean>(false);
    const [error, setError] = useState<string>('');
    const navigate = useNavigate();
+   const { user: currentUser } = useAppSelector(authSelector);
 
    const form = useFormik({
       initialValues: {
@@ -29,13 +31,17 @@ export const Register = React.memo(() => {
       ) => {
          try {
             setIsLoading(true);
-            const unique = await checkUsernameValid(username);
+            const unique = !!(await getOnlyOneUser('username', username));
             if (unique) {
                setError('This username already use by other user');
                setIsLoading(false);
                return;
             }
-            const user: User = await signUp(email, password);
+            const { user } = await createUserWithEmailAndPassword(
+               auth,
+               email,
+               password
+            );
             await addDocument('users', {
                avatar: IMAGES.noAvatar,
                description: '',
@@ -47,8 +53,8 @@ export const Register = React.memo(() => {
                username: username,
             });
             resetForm();
-            setIsLoading(false);
             setError('');
+            setIsLoading(false);
          } catch (error: any) {
             setError(error.code);
             setIsLoading(false);
@@ -76,12 +82,12 @@ export const Register = React.memo(() => {
    });
 
    useEffect(() => {
-      if (user) {
+      if (currentUser) {
          navigate('/', {
             replace: true,
          });
       }
-   }, [user, navigate]);
+   }, [currentUser, navigate]);
 
    return (
       <div className="min-h-screen  py-9 flex justify-center items-center animate-fadeIn">
@@ -225,10 +231,7 @@ export const Register = React.memo(() => {
                         Or
                      </span>
                   </div>
-                  <button className="button-gg">
-                     <FcGoogle />
-                     Continue with google
-                  </button>
+                  <ButtonLoginGoogle />
                   <p className="text-center text-text-color-gray">
                      By signing up, you agree to our Terms, Data Policy and
                      Cookies Policy.

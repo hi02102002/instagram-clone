@@ -1,30 +1,39 @@
-import { useAuth } from 'hooks';
+import ButtonLoginGoogle from 'components/ButtonLoginGoogle';
+import { authSelector } from 'features/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useAppSelector, useIsMounted } from 'hooks';
 import { IMAGES } from 'images';
+import { auth } from 'lib/firebase';
 import React, { useEffect, useState } from 'react';
-import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
-import './Auth.styles.css';
+import './Auth.css';
 
 export const Login = () => {
-   const { login, user } = useAuth();
+   const { user } = useAppSelector(authSelector);
    const [email, setEmail] = useState<string>('');
    const [password, setPassword] = useState<string>('');
    const [isLoading, setIsLoading] = useState<boolean>(false);
    const [error, setError] = useState<string>('');
    const navigate = useNavigate();
+   const isMounted = useIsMounted();
 
    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       try {
-         setIsLoading(true);
-         await login(email, password);
-         setIsLoading(false);
-         setError('');
-         setEmail('');
-         setPassword('');
+         if (isMounted()) {
+            setIsLoading(true);
+            await signInWithEmailAndPassword(auth, email, password);
+            setIsLoading(false);
+            setError('');
+            setEmail('');
+            setPassword('');
+         }
       } catch (error: any) {
-         setError(error.code);
-         setIsLoading(false);
+         if (isMounted()) {
+            setError(error.code);
+            setIsLoading(false);
+            console.log(error);
+         }
       }
    };
 
@@ -56,7 +65,7 @@ export const Login = () => {
                      <input
                         type="email"
                         className="input-field-auth"
-                        placeholder="email"
+                        placeholder="Email"
                         value={email}
                         onChange={(e) => {
                            setEmail(e.target.value);
@@ -103,10 +112,7 @@ export const Login = () => {
                         Or
                      </span>
                   </div>
-                  <button className="button-gg">
-                     <FcGoogle />
-                     Continue with google
-                  </button>
+                  <ButtonLoginGoogle />
                   <Link
                      to="forgot-password"
                      className="text-blue-color block text-center hover:underline"

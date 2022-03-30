@@ -1,6 +1,5 @@
 module.exports = {
    content: ['./src/**/*.{js,jsx,ts,tsx}'],
-   important: true,
    theme: {
       extend: {
          colors: {
@@ -22,6 +21,12 @@ module.exports = {
          height: {
             'header-height': '60px',
          },
+         margin: {
+            height: '60px',
+         },
+         'min-height': {
+            'min-height': 'calc(100vh_-_60px)',
+         },
          screens: {
             ss: '375px',
          },
@@ -30,11 +35,33 @@ module.exports = {
                '0%': { opacity: '0' },
                '100%': { opacity: '1' },
             },
+            scaleUp: {
+               from: {
+                  opacity: '0',
+                  transform: 'scale(0)',
+               },
+               to: {
+                  opacity: '1',
+                  transform: 'scale(1)',
+               },
+            },
+            slideInUp: {
+               from: {
+                  transform: 'translate3d(0, 100%, 0)',
+                  opacity: '0',
+               },
+               to: {
+                  transform: 'translate3d(0, 0, 0)',
+                  opacity: '1',
+               },
+            },
          },
          animation: {
             fadeIn: 'fadeIn 0.3s ease-in-out ',
+            slideInUp: 'slideInUp 0.3s ease-in-out ',
+            scaleUp: 'scaleUp 0.3s ease-in-out',
          },
       },
    },
-   plugins: [],
+   plugins: [require('@tailwindcss/line-clamp')],
 };

@@ -1,6 +1,8 @@
 import RequireAuth from 'components/RequireAuth';
 import { Login, Register } from 'pages/Auth';
+import Chat from 'pages/Chat';
 import Home from 'pages/Home';
+import Profile from 'pages/Profile';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
@@ -16,6 +18,31 @@ function App() {
                   </RequireAuth>
                }
             />
+            <Route
+               path="/:username"
+               element={
+                  <RequireAuth>
+                     <Profile />
+                  </RequireAuth>
+               }
+            />
+            <Route
+               path="/chat"
+               element={
+                  <RequireAuth>
+                     <Chat />
+                  </RequireAuth>
+               }
+            >
+               <Route
+                  path="/chat/:conversationId"
+                  element={
+                     <RequireAuth>
+                        <Chat />
+                     </RequireAuth>
+                  }
+               ></Route>
+            </Route>
             <Route path="/login" element={<Login />} />
             <Route path="/sign-up" element={<Register />} />
          </Routes>

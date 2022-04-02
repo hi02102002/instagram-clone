@@ -98,8 +98,8 @@ const Post: React.FC<Props> = ({ post, onRemove }) => {
    }, [currentUser, post]);
 
    return (
-      <div className="w-full bg-white rounded-t ">
-         <div className="h-header-height flex items-center justify-between px-5 bg-white rounded-t border border-solid border-border-color">
+      <div className="w-full bg-white rounded-t border border-solid border-border-color">
+         <div className="h-header-height flex items-center justify-between px-5 bg-white rounded-t ">
             <div className="flex items-center gap-x-4">
                <Avatar src={post._user._avatar} alt={post._user._username} />
                <div>

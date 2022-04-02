@@ -23,13 +23,15 @@ import { db } from 'lib/firebase';
 import React, { useEffect, useRef, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { GrSend } from 'react-icons/gr';
+import { IoIosArrowBack } from 'react-icons/io';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getConversation } from 'services/getConversation';
+import { getConversation } from 'services';
 import { IMessage } from 'shared';
 import { getConversationName } from 'utils';
 import InputMessage from '../InputMessage';
 import Message from '../Message';
+import ModalCreateConversation from '../ModalCreateConversation';
 import ModalInformation from '../ModalInformation';
 
 const LIMITED_CHAT = 20;
@@ -43,6 +45,8 @@ const ChatView = () => {
    const [count, setCount] = useState<number>(LIMITED_CHAT);
    const [showModalConfirm, setShowModalConfirm] = useState<boolean>(false);
    const [showModalInformation, setShowModalInformation] =
+      useState<boolean>(false);
+   const [showModalCreateConversation, setShowModalCreateConversation] =
       useState<boolean>(false);
    const messagesEndRef = useRef<HTMLDivElement>(null);
    const dispatch = useAppDispatch();
@@ -98,7 +102,7 @@ const ChatView = () => {
    }, [conversationId, count]);
 
    useEffect(() => {
-      if (conversationId) {
+      if (conversationId && !currentConversation) {
          getConversation(conversationId)
             .then((value) => {
                if (value) {
@@ -109,7 +113,7 @@ const ChatView = () => {
                console.log(reject);
             });
       }
-   }, [conversationId, dispatch]);
+   }, [conversationId, dispatch, currentConversation]);
 
    useEffect(() => {
       setCount(LIMITED_CHAT);
@@ -118,16 +122,32 @@ const ChatView = () => {
    return (
       <div className=" flex flex-col h-full animate-fadeIn">
          {!currentConversation ? (
-            <div className="flex items-center justify-center h-full flex-col">
+            <div className="flex items-center justify-center h-full flex-col font-medium px-4 gap-y-3">
                <GrSend className="h-24 w-24" />
                <h2>Your message</h2>
                <p>Send private photos and messages to a friend or group.</p>
-               <button></button>
+               <button
+                  className="!bg-blue-color px-4 font-medium text-white py-2 rounded flex items-center justify-center h-9"
+                  onClick={() => setShowModalCreateConversation(true)}
+               >
+                  Send message
+               </button>
             </div>
          ) : (
             <>
                <div className="h-header-height flex items-center justify-between px-6 border-solid border-b border-border-color flex-shrink-0">
                   <div className="flex items-center gap-x-3 ">
+                     <button
+                        onClick={() => {
+                           dispatch(selectConversation(null));
+                           navigate('/chat', {
+                              replace: true,
+                           });
+                        }}
+                        className=" lg:hidden block"
+                     >
+                        <IoIosArrowBack className="w-5 h-5" />
+                     </button>
                      <Avatar src={IMAGES.noAvatar} alt="" />
                      <h4 className="font-medium text-text-color-black max-w-[200px] line-clamp-1">
                         {currentConversation &&
@@ -204,6 +224,11 @@ const ChatView = () => {
                   setShowModalInformation(false);
                }}
                onRemove={() => setShowModalConfirm(true)}
+            />
+         )}
+         {showModalCreateConversation && (
+            <ModalCreateConversation
+               onClose={() => setShowModalCreateConversation(false)}
             />
          )}
       </div>

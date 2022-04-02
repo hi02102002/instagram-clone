@@ -6,7 +6,7 @@ import { db } from 'lib/firebase';
 import React, { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { Link } from 'react-router-dom';
-import { getUserSuggestion } from 'services';
+import { getOnlyOneUser, getUserSuggestion } from 'services';
 import { IUser } from 'shared';
 
 const Sidebar = () => {
@@ -19,6 +19,12 @@ const Sidebar = () => {
       if (user?.docId) {
          updateDoc(doc(db, 'users', user.docId), {
             following: arrayUnion(userId),
+         });
+
+         const _oneUser = (await getOnlyOneUser('userId', userId)) as IUser;
+
+         updateDoc(doc(db, 'users', _oneUser.docId as string), {
+            followers: arrayUnion(_oneUser.userId as string),
          });
          setSuggestionUser((suggestionUser) =>
             [...suggestionUser].filter((_user) => _user.userId !== userId)
@@ -44,7 +50,7 @@ const Sidebar = () => {
    }, [user?.following, user?.userId]);
 
    return (
-      <div className="flex-1 w-full flex flex-col gap-y-5">
+      <div className="flex-1 w-full  flex-col gap-y-5 lg:flex hidden">
          <div className="flex items-center gap-x-4">
             {imgUserLoading && <Skeleton circle className="w-14 h-14" />}
             <Avatar

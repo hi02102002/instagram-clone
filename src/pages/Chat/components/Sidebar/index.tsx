@@ -5,8 +5,7 @@ import { selectConversation } from 'features/conversations';
 import { conversationSelector } from 'features/conversations/conversationsSlice';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { IMAGES } from 'images';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { IMessageType } from 'shared';
 import { getConversationName } from 'utils';
 import ModalCreateConversation from '../ModalCreateConversation';
@@ -17,15 +16,6 @@ const Sidebar = () => {
    const { conversations, currentConversation } =
       useAppSelector(conversationSelector);
    const dispatch = useAppDispatch();
-   const navigate = useNavigate();
-
-   useEffect(() => {
-      if (currentConversation) {
-         navigate(`/chat/${currentConversation._conversationDocId}`);
-      }
-   }, [currentConversation, navigate]);
-
-   console.log(currentConversation);
 
    return (
       <div className="h-full flex flex-col ">
@@ -122,7 +112,7 @@ const Sidebar = () => {
                               </h4>
                               {conversation._lastMessage && (
                                  <div className="text-text-color-gray w-full flex items-center gap-x-1  ">
-                                    <span className="line-clamp-1 max-w-[100px]">
+                                    <span className="line-clamp-1 max-w-[80px]">
                                        {_type === IMessageType.FILE
                                           ? 'File'
                                           : _type === IMessageType.IMG_ICON
@@ -160,4 +150,4 @@ const Sidebar = () => {
    );
 };
 
-export default Sidebar;
+export default React.memo(Sidebar);

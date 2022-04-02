@@ -2,6 +2,7 @@ import RequireAuth from 'components/RequireAuth';
 import { Login, Register } from 'pages/Auth';
 import Chat from 'pages/Chat';
 import Home from 'pages/Home';
+import Posts from 'pages/Post';
 import Profile from 'pages/Profile';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
@@ -43,6 +44,14 @@ function App() {
                   }
                ></Route>
             </Route>
+            <Route
+               path="/p/:postId"
+               element={
+                  <RequireAuth>
+                     <Posts />
+                  </RequireAuth>
+               }
+            />
             <Route path="/login" element={<Login />} />
             <Route path="/sign-up" element={<Register />} />
          </Routes>

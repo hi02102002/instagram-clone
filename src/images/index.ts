@@ -5,4 +5,9 @@ export const IMAGES = {
    logoMain: require('./LOGO_main.png'),
    ig: require('./ig.png'),
    heart: require('./heart.png'),
+   like: require('./like.png'),
+   wow: require('./wow.png'),
+   angry: require('./angry.png'),
+   haha: require('./haha.png'),
+   sad: require('./sad.png'),
 };

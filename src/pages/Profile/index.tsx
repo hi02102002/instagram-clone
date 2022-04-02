@@ -62,24 +62,26 @@ const Profile = () => {
    return (
       <Layout>
          <div className="py-6 text-text-color-black">
-            <div className="flex mb-11">
+            <div className="flex mb-11 md:flex-row flex-col items-center md:gap-y-0 gap-y-4 ">
                <div className="w-72 flex items-center justify-center">
                   {loadingUser ? (
-                     <Skeleton circle className="w-36 h-36" />
+                     <Skeleton circle className="  md:w-36 md:h-36 w-20 h-20" />
                   ) : (
                      <Avatar
                         src={user?.avatar as string}
                         alt=""
-                        className="w-36 h-36"
+                        className="  md:w-36 md:h-36 w-20 h-20"
                      />
                   )}
                </div>
                <div className="flex flex-col gap-y-4">
-                  <div className="flex items-center">
+                  <div className="flex items-center md:justify-start justify-center">
                      {loadingUser ? (
                         <Skeleton className="h-6 w-32" />
                      ) : (
-                        <h1 className="text-3xl">{user?.username}</h1>
+                        <h1 className="text-3xl text-center md:text-left">
+                           {user?.username}
+                        </h1>
                      )}
                      {user?.userId !== currentUser?.userId && <button></button>}
                   </div>
@@ -114,9 +116,13 @@ const Profile = () => {
                      )}
                   </div>
                   {loadingUser ? (
-                     <Skeleton className="h-7 w-36" />
+                     <div className="flex justify-center md:justify-start">
+                        <Skeleton className="h-7 w-36 " />
+                     </div>
                   ) : (
-                     <h4 className="font-medium text-xl">{user?.fullName}</h4>
+                     <h4 className="font-medium text-xl text-center md:text-left">
+                        {user?.fullName}
+                     </h4>
                   )}
                   {loadingUser ? (
                      <div>
@@ -125,7 +131,9 @@ const Profile = () => {
                      </div>
                   ) : (
                      user?.description.trim().length !== 0 && (
-                        <p>{user?.description}</p>
+                        <p className="text-center md:text-left">
+                           {user?.description}
+                        </p>
                      )
                   )}
                </div>
@@ -140,7 +148,7 @@ const Profile = () => {
                   </button>
                </div>
                {loadingPosts ? (
-                  <div className="grid grid-cols-3 gap-7">
+                  <div className="grid md:grid-cols-3 grid-cols-2 md:gap-7 gap-4">
                      {[...new Array(3)].map((item) => (
                         <div className="aspect-square" key={item}>
                            <Skeleton className="w-full h-full" />
@@ -151,7 +159,7 @@ const Profile = () => {
                   <>
                      {posts.length === 0 &&
                      user?.userId === currentUser?.userId ? (
-                        <div className="flex items-center justify-center flex-col py-16 px-4 gap-y-3">
+                        <div className="flex items-center justify-center flex-col py-16 px-4 gap-y-3 text-center">
                            <AiOutlineCamera className="w-16 h-16" />
                            <h2 className="font-medium">Share Photos</h2>
                            <p className="font-medium">
@@ -167,7 +175,7 @@ const Profile = () => {
                         </div>
                      ) : null}
                      {posts.length > 0 && !loadingPosts && (
-                        <div className=" grid grid-cols-3 gap-7">
+                        <div className=" grid md:grid-cols-3 grid-cols-2 md:gap-7 gap-4">
                            {posts.map((post) => (
                               <div
                                  key={post.postId}

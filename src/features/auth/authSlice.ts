@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { IUser } from 'shared';
 import { RootState } from './../../store/index';
-import { setIsLogin, setUser } from './authAction';
+import { setIsLogin, setUser, updateUser } from './authAction';
 
 const initialState: {
    user: IUser | null;
@@ -22,6 +22,9 @@ const authSlice = createSlice({
          })
          .addCase(setIsLogin, (state, action) => {
             state.isLogin = action.payload;
+         })
+         .addCase(updateUser, (state, action) => {
+            state.user = action.payload;
          });
    },
 });

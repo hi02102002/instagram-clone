@@ -2,7 +2,7 @@ import Avatar from 'components/Avatar';
 import Layout from 'components/Layout';
 import { authSelector } from 'features/auth';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useIsMounted } from 'hooks';
 import { db } from 'lib/firebase';
 import React, { useEffect, useState } from 'react';
 import { AiOutlineAppstore, AiOutlineCamera } from 'react-icons/ai';
@@ -20,6 +20,7 @@ const Profile = () => {
    const [loadingUser, setLoadingUser] = useState<boolean>(true);
    const dispatch = useAppDispatch();
    const navigate = useNavigate();
+   const isMounted = useIsMounted();
 
    useEffect(() => {
       if (username) {
@@ -53,11 +54,13 @@ const Profile = () => {
                   };
                })
                .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-            setPosts(posts);
-            setLoadingPosts(false);
+            if (isMounted()) {
+               setPosts(posts);
+               setLoadingPosts(false);
+            }
          });
       }
-   }, [username, dispatch]);
+   }, [username, dispatch, isMounted]);
 
    return (
       <Layout>
@@ -149,8 +152,8 @@ const Profile = () => {
                </div>
                {loadingPosts ? (
                   <div className="grid md:grid-cols-3 grid-cols-2 md:gap-7 gap-4">
-                     {[...new Array(3)].map((item) => (
-                        <div className="aspect-square" key={item}>
+                     {[...new Array(3)].map((item, index) => (
+                        <div className="aspect-square" key={index}>
                            <Skeleton className="w-full h-full" />
                         </div>
                      ))}

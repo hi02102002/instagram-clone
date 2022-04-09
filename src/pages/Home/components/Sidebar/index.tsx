@@ -24,7 +24,7 @@ const Sidebar = () => {
          const _oneUser = (await getOnlyOneUser('userId', userId)) as IUser;
 
          updateDoc(doc(db, 'users', _oneUser.docId as string), {
-            followers: arrayUnion(_oneUser.userId as string),
+            followers: arrayUnion(user.docId as string),
          });
          setSuggestionUser((suggestionUser) =>
             [...suggestionUser].filter((_user) => _user.userId !== userId)
@@ -34,7 +34,7 @@ const Sidebar = () => {
 
    useEffect(() => {
       setLoadingSuggestionUser(true);
-      if (user?.userId && user.following) {
+      if (user?.userId && user?.following) {
          getUserSuggestion(
             user?.following as string[],
             user?.userId as string,

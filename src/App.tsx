@@ -4,6 +4,7 @@ import Chat from 'pages/Chat';
 import Home from 'pages/Home';
 import Posts from 'pages/Post';
 import Profile from 'pages/Profile';
+import Setting from 'pages/Setting';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
@@ -49,6 +50,14 @@ function App() {
                element={
                   <RequireAuth>
                      <Posts />
+                  </RequireAuth>
+               }
+            />
+            <Route
+               path="/setting"
+               element={
+                  <RequireAuth>
+                     <Setting />
                   </RequireAuth>
                }
             />

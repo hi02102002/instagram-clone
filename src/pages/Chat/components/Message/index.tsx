@@ -118,7 +118,7 @@ const Message: React.FC<Props> = ({ message, isRight }) => {
                   <img
                      src={message._message}
                      alt=""
-                     className="max-w-xs rounded"
+                     className="md:max-w-xs rounded max-w-[180px]"
                   />
                )}
                {message._userReactions.length > 0 && (

@@ -1,10 +1,9 @@
 import Avatar from 'components/Avatar';
-import ClickAwayListener from 'components/ClickAwayListener';
 import ModalConfirm from 'components/ModalConfirm';
 import { formatDistance } from 'date-fns';
 import { authSelector } from 'features/auth';
 import { doc, updateDoc } from 'firebase/firestore';
-import { useAppSelector } from 'hooks';
+import { useAppSelector, useClickOutside } from 'hooks';
 import { db } from 'lib/firebase';
 import React, { useCallback, useEffect, useState } from 'react';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
@@ -26,6 +25,9 @@ const Post: React.FC<Props> = ({ post, onRemove }) => {
    const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false);
    const [isShowModal, setIsShowModal] = useState<boolean>(false);
    const { user: currentUser } = useAppSelector(authSelector);
+   const dropdownRef = useClickOutside(() => {
+      setIsShowDropdown(false);
+   });
 
    const toggleLiked = async () => {
       setIsLiked(!isLiked);
@@ -119,11 +121,9 @@ const Post: React.FC<Props> = ({ post, onRemove }) => {
                   <HiOutlineDotsHorizontal className="w-6 h-6 text-text-color-gray" />
                </button>
                {isShowDropdown && (
-                  <ClickAwayListener
-                     onClickAway={() => {
-                        setIsShowDropdown(false);
-                     }}
-                     className="absolute z-40 animate-slideInUp top-[40px] "
+                  <div
+                     className="absolute z-40 animate-slideInUp top-[40px] md:left-[-40px] left-[-105px]"
+                     ref={dropdownRef}
                   >
                      <div className=" bg-white rounded-lg py-2 w-40 shadow-box-shadow">
                         {post._user._userId === currentUser?.userId && (
@@ -155,7 +155,7 @@ const Post: React.FC<Props> = ({ post, onRemove }) => {
                            </span>
                         </button>
                      </div>
-                  </ClickAwayListener>
+                  </div>
                )}
             </div>
          </div>

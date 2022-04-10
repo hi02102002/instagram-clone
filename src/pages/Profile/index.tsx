@@ -12,7 +12,7 @@ import { getOnlyOneUser } from 'services';
 import { IPost, IUser } from 'shared';
 
 const Profile = () => {
-   const { username } = useParams();
+   const { _userId } = useParams();
    const { user: currentUser } = useAppSelector(authSelector);
    const [user, setUser] = useState<IUser | null>(null);
    const [posts, setPosts] = useState<IPost[]>([]);
@@ -23,9 +23,9 @@ const Profile = () => {
    const isMounted = useIsMounted();
 
    useEffect(() => {
-      if (username) {
+      if (_userId) {
          setLoadingUser(true);
-         getOnlyOneUser('username', username)
+         getOnlyOneUser('userId', _userId)
             .then((value) => {
                if (value) {
                   setUser(value);
@@ -36,14 +36,14 @@ const Profile = () => {
             })
             .catch((reason) => console.log(reason));
       }
-   }, [username, dispatch]);
+   }, [_userId, dispatch]);
 
    useEffect(() => {
-      if (username) {
+      if (_userId) {
          setLoadingPosts(true);
          const q = query(
             collection(db, 'posts'),
-            where('_user._username', '==', username)
+            where('_user._userId', '==', _userId)
          );
          onSnapshot(q, (querySnapshot) => {
             const posts = querySnapshot.docs
@@ -60,7 +60,7 @@ const Profile = () => {
             }
          });
       }
-   }, [username, dispatch, isMounted]);
+   }, [_userId, dispatch, isMounted]);
 
    return (
       <Layout>
@@ -183,7 +183,7 @@ const Profile = () => {
                               <div
                                  key={post.postId}
                                  onClick={() => {
-                                    navigate(`/p/${post.docId}`);
+                                    navigate(`/p/${post.postId}`);
                                  }}
                                  className="cursor-pointer"
                               >

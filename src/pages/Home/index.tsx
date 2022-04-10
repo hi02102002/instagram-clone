@@ -1,12 +1,12 @@
 import Layout from 'components/Layout';
+import Post from 'components/Post';
 import { postsSelector, subscribePosts, unmountPosts } from 'features/posts';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { db } from 'lib/firebase';
 import React, { useEffect, useRef, useState } from 'react';
-import Post from './components/Post';
 import Sidebar from './components/Sidebar';
-import SkeletonPost from './components/SkeletonPost';
+import SkeletonPost from '../../components/SkeletonPost';
 
 let _left: number | undefined;
 

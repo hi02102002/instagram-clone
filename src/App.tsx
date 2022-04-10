@@ -21,7 +21,7 @@ function App() {
                }
             />
             <Route
-               path="/:username"
+               path="/:_userId"
                element={
                   <RequireAuth>
                      <Profile />
@@ -46,7 +46,7 @@ function App() {
                ></Route>
             </Route>
             <Route
-               path="/p/:postId"
+               path="/p/:_postId"
                element={
                   <RequireAuth>
                      <Posts />

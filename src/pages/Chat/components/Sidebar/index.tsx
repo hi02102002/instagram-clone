@@ -3,7 +3,7 @@ import { formatDistance } from 'date-fns';
 import { authSelector } from 'features/auth';
 import { selectConversation } from 'features/conversations';
 import { conversationSelector } from 'features/conversations/conversationsSlice';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useIsMounted } from 'hooks';
 import { IMAGES } from 'images';
 import React, { useState } from 'react';
 import { IMessageType } from 'shared';
@@ -16,6 +16,7 @@ const Sidebar = () => {
    const { conversations, currentConversation } =
       useAppSelector(conversationSelector);
    const dispatch = useAppDispatch();
+   const isMounted = useIsMounted();
 
    return (
       <div className="h-full flex flex-col ">
@@ -142,7 +143,9 @@ const Sidebar = () => {
          {showModal && (
             <ModalCreateConversation
                onClose={() => {
-                  setShowModal(false);
+                  if (isMounted()) {
+                     setShowModal(false);
+                  }
                }}
             />
          )}

@@ -102,7 +102,7 @@ const Sidebar = () => {
                        <div className="flex items-center gap-x-4">
                           <Avatar src={user.avatar} alt={user.fullName} />
                           <div className="gap-y-1">
-                             <Link to={`/${user.username}`}>
+                             <Link to={`/${user.userId}`}>
                                 <h4 className="font-medium text-text-color-black">
                                    {user.username}
                                 </h4>

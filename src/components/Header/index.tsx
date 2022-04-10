@@ -146,7 +146,7 @@ const Header = () => {
                      >
                         <div className="flex flex-col gap-y-2 py-2 ">
                            <Link
-                              to={`/${user?.username}`}
+                              to={`/${user?.userId}`}
                               className="px-4 py-2 flex items-center gap-x-[10px] font-medium text-text-color-black hover:bg-gray-200 transition-all"
                            >
                               <FaRegUserCircle className="w-4 h-4 text-text-color-black" />

@@ -1,8 +1,10 @@
 export { addComment } from './addComment';
 export { addDocument } from './addDocument';
+export { getAllComments } from './getAllComments';
 export { getAllPostsUserFollowing } from './getAllPostsUserFollowing';
 export { getAllUserFollowing } from './getAllUserFollowing';
 export { getConversation } from './getConversation';
+export { getOnlyOnePost } from './getOnlyOnePost';
 export { getOnlyOneUser } from './getOnlyOneUser';
 export { getUserSuggestion } from './getUserSuggestion';
 export { loginWithGoogle } from './loginWithGoggle';

@@ -17,7 +17,7 @@ const ButtonLoginGoogle = () => {
          const username = user.email?.slice(0, indexOfUsername);
 
          addDocument('users', {
-            avatar: IMAGES.noAvatar,
+            avatar: user.photoURL || IMAGES.noAvatar,
             description: '',
             email: user.email,
             followers: [],

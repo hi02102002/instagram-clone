@@ -2,17 +2,16 @@ import Avatar from 'components/Avatar';
 import ModalConfirm from 'components/ModalConfirm';
 import { formatDistance } from 'date-fns';
 import { authSelector } from 'features/auth';
-import { doc, updateDoc } from 'firebase/firestore';
 import { useAppSelector, useClickOutside } from 'hooks';
-import { db } from 'lib/firebase';
 import React, { useCallback, useEffect, useState } from 'react';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import { IoMdRemoveCircleOutline } from 'react-icons/io';
 import { MdOutlineReportGmailerrorred } from 'react-icons/md';
+import Skeleton from 'react-loading-skeleton';
 import { Link } from 'react-router-dom';
-import { IPost } from 'shared';
+import { addComment, getOnlyOneUser, toggleLike } from 'services';
+import { IPost, IUser } from 'shared';
 import { uppercaseFirstLetter } from 'utils';
-import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
    post: IPost;
@@ -25,55 +24,38 @@ const Post: React.FC<Props> = ({ post, onRemove }) => {
    const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false);
    const [isShowModal, setIsShowModal] = useState<boolean>(false);
    const { user: currentUser } = useAppSelector(authSelector);
+   const [user, setUser] = useState<IUser | null>(null);
    const dropdownRef = useClickOutside(() => {
       setIsShowDropdown(false);
    });
+   const [loadingUser, setLoadingUser] = useState<boolean>(false);
+   const [comments, setComments] = useState<
+      {
+         _id: string;
+         _userId: string;
+         _username?: string;
+         _content: string;
+      }[]
+   >([]);
 
-   const toggleLiked = async () => {
+   const handleLike = () => {
       setIsLiked(!isLiked);
-      const newUserLikes = isLiked
-         ? post._userLikes.filter(
-              (user) => user._username !== currentUser?.username
-           )
-         : [
-              ...post._userLikes,
-              {
-                 _fullName: currentUser?.fullName,
-                 _username: currentUser?.username,
-                 _isFollowing: false,
-              },
-           ];
-      if (post?.docId) {
-         updateDoc(doc(db, 'posts', post.docId), {
-            _userLikes: newUserLikes,
-         });
+      if (currentUser) {
+         toggleLike(isLiked, post, currentUser);
       }
    };
 
    const handleAddComment = useCallback(() => {
-      if (textInputComment.trim().length === 0) {
-         return;
-      }
-      const newUserComments = [
-         ...post._userComments,
-         {
-            _id: uuidv4(),
-            _username: currentUser?.username as string,
-            _content: textInputComment,
-         },
-      ];
-      if (post.docId) {
-         updateDoc(doc(db, 'posts', post.docId), {
-            _userComments: newUserComments,
-         });
+      if (currentUser) {
+         addComment(
+            textInputComment,
+            currentUser.username,
+            currentUser.userId,
+            post
+         );
       }
       setTextInputComment('');
-   }, [
-      currentUser?.username,
-      textInputComment,
-      post._userComments,
-      post.docId,
-   ]);
+   }, [currentUser, textInputComment, post]);
 
    useEffect(() => {
       function handlePress(ev: KeyboardEvent) {
@@ -90,7 +72,7 @@ const Post: React.FC<Props> = ({ post, onRemove }) => {
 
    useEffect(() => {
       const userExist = post._userLikes.find(
-         (user) => user._username === currentUser?.username
+         (user) => user._userId === currentUser?.userId
       );
       if (!userExist) {
          setIsLiked(false);
@@ -99,18 +81,59 @@ const Post: React.FC<Props> = ({ post, onRemove }) => {
       }
    }, [currentUser, post]);
 
+   useEffect(() => {
+      setLoadingUser(true);
+      getOnlyOneUser('userId', post._user._userId).then((_user) => {
+         if (_user) {
+            setUser(_user);
+            setLoadingUser(false);
+         }
+      });
+   }, [post._user._userId]);
+
+   useEffect(() => {
+      const getAllComments = async () => {
+         const _comments = post._userComments.map(async (_user) => {
+            const user = await getOnlyOneUser('userId', _user._userId);
+            return {
+               ..._user,
+               _username: user?.username as string,
+            };
+         });
+
+         return await Promise.all(_comments);
+      };
+
+      getAllComments().then((value) => {
+         setComments(value);
+      });
+   }, [post._userComments]);
+
    return (
       <div className="w-full bg-white rounded-t border border-solid border-border-color">
          <div className="h-header-height flex items-center justify-between px-5 bg-white rounded-t ">
-            <div className="flex items-center gap-x-4">
-               <Avatar src={post._user._avatar} alt={post._user._username} />
-               <div>
-                  <Link to={`/${post._user._username}`}>
-                     <h4 className="font-medium">{post._user._username}</h4>
-                  </Link>
-                  {post._location.length > 0 && <span>{post._location}</span>}
+            {loadingUser ? (
+               <div className="flex items-center gap-x-4">
+                  <Skeleton circle width={36} height={36} />
+                  <Skeleton width={80} height={20} />
                </div>
-            </div>
+            ) : (
+               <div className="flex items-center gap-x-4">
+                  <Avatar
+                     src={user?.avatar as string}
+                     alt={user?.username as string}
+                  />
+                  <div>
+                     <Link to={`/${user?.username}`}>
+                        <h4 className="font-medium">{user?.username}</h4>
+                     </Link>
+                     {post._location.length > 0 && (
+                        <span>{post._location}</span>
+                     )}
+                  </div>
+               </div>
+            )}
+
             <div className="relative">
                <button
                   onClick={(e) => {
@@ -170,7 +193,7 @@ const Post: React.FC<Props> = ({ post, onRemove }) => {
          </div>
          <div className="py-4 px-5 bg-white flex flex-col gap-y-4  min-h-[7rem]">
             <div className="flex items-center gap-x-5">
-               <button onClick={toggleLiked}>
+               <button onClick={handleLike}>
                   {isLiked ? (
                      <svg
                         aria-label="Unlike"
@@ -218,11 +241,11 @@ const Post: React.FC<Props> = ({ post, onRemove }) => {
             <div className="flex flex-col gap-y-2 ">
                <h5 className="font-medium">{post._userLikes.length} likes</h5>
                <div className="flex gap-x-1">
-                  <h4 className="font-medium">{post._user._username}</h4>
+                  <h4 className="font-medium">{user?.username}</h4>
                   <p>{post._content}</p>
                </div>
                <div>
-                  {post._userComments.map((comment) => (
+                  {comments.map((comment) => (
                      <div className="flex gap-x-1" key={comment._id}>
                         <h4 className="font-medium">{comment._username}</h4>
                         <p>{comment._content}</p>
@@ -260,14 +283,14 @@ const Post: React.FC<Props> = ({ post, onRemove }) => {
                onChange={(e) => {
                   setTextInputComment(e.target.value);
                }}
-               onBlur={(e) => {
-                  setTextInputComment('');
-               }}
             />
             <button
                className="font-medium text-blue-color disabled:opacity-60"
-               disabled={textInputComment.trim().length === 0}
-               onClick={handleAddComment}
+               // disabled={textInputComment.trim().length === 0}
+               onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddComment();
+               }}
             >
                Post
             </button>

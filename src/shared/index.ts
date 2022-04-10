@@ -21,17 +21,17 @@ export interface IPost {
    _location: string;
    _user: {
       _userId: string;
-      _username: string;
-      _avatar: string;
+      _username?: string;
+      _avatar?: string;
    };
    _userComments: {
       _id: string;
-      _username: string;
+      _userId: string;
+      _username?: string;
       _content: string;
    }[];
    _userLikes: {
-      _fullName: string;
-      _username: string;
+      _userId: string;
       _isFollowing: boolean;
    }[];
    _content: string;
@@ -46,7 +46,7 @@ export interface LoadingState {
 }
 
 export interface IUserLiked {
-   _fullName: string;
+   _userId: string;
    _username: string;
    _isFollowing: boolean;
 }

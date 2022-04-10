@@ -50,9 +50,7 @@ const ModalCreatePost: React.FC<Props> = ({ onClose }) => {
             _image: url,
             _location: 'Phu Yen',
             _user: {
-               _avatar: user?.avatar as string,
                _userId: user?.userId as string,
-               _username: user?.username as string,
             },
             _userComments: [],
             _userLikes: [],

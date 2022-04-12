@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { AiOutlineAppstore, AiOutlineCamera } from 'react-icons/ai';
 import Skeleton from 'react-loading-skeleton';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getOnlyOneUser } from 'services';
+import { followUser, getOnlyOneUser, unfollowUser } from 'services';
 import { IPost, IUser } from 'shared';
 
 const Profile = () => {
@@ -18,9 +18,35 @@ const Profile = () => {
    const [posts, setPosts] = useState<IPost[]>([]);
    const [loadingPosts, setLoadingPosts] = useState<boolean>(true);
    const [loadingUser, setLoadingUser] = useState<boolean>(true);
+   const [isFollowed, setIsFollowed] = useState<boolean>(false);
    const dispatch = useAppDispatch();
    const navigate = useNavigate();
    const isMounted = useIsMounted();
+
+   const handleFollowUser = async () => {
+      if (_userId && currentUser) {
+         await followUser(_userId, currentUser);
+      }
+      setUser({
+         ...(user as IUser),
+         followers: [
+            ...(user?.followers as string[]),
+            currentUser?.docId as string,
+         ],
+      });
+   };
+
+   const handleUnfollowUser = async () => {
+      if (_userId && currentUser) {
+         await unfollowUser(_userId, currentUser);
+      }
+      setUser({
+         ...(user as IUser),
+         followers: [...(user?.followers as string[])].filter(
+            (_userDocId) => _userDocId !== (currentUser?.docId as string)
+         ),
+      });
+   };
 
    useEffect(() => {
       if (_userId) {
@@ -62,6 +88,14 @@ const Profile = () => {
       }
    }, [_userId, dispatch, isMounted]);
 
+   useEffect(() => {
+      if (user?.followers.includes(currentUser?.docId as string)) {
+         setIsFollowed(true);
+      } else {
+         setIsFollowed(false);
+      }
+   }, [currentUser?.docId, user?.followers]);
+
    return (
       <Layout>
          <div className="py-6 text-text-color-black">
@@ -82,11 +116,28 @@ const Profile = () => {
                      {loadingUser ? (
                         <Skeleton className="h-6 w-32" />
                      ) : (
-                        <h1 className="text-3xl text-center md:text-left">
-                           {user?.username}
-                        </h1>
+                        <div className="flex items-center gap-4 flex-col md:flex-row">
+                           <h1 className="text-3xl text-center md:text-left">
+                              {user?.username}
+                           </h1>
+                           {currentUser?.userId !== _userId &&
+                              (isFollowed ? (
+                                 <button
+                                    className=" font-medium text-white py-2 rounded flex items-center justify-center h-7 bg-blue-color px-4"
+                                    onClick={handleUnfollowUser}
+                                 >
+                                    Unfollow
+                                 </button>
+                              ) : (
+                                 <button
+                                    className="w-full font-medium text-white py-2 rounded flex items-center justify-center h-7 bg-blue-color px-4"
+                                    onClick={handleFollowUser}
+                                 >
+                                    Follow
+                                 </button>
+                              ))}
+                        </div>
                      )}
-                     {user?.userId !== currentUser?.userId && <button></button>}
                   </div>
                   <div className="flex items-center gap-x-10">
                      {loadingPosts ? (

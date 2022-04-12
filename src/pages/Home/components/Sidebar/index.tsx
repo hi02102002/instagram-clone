@@ -1,12 +1,10 @@
 import Avatar from 'components/Avatar';
 import { authSelector } from 'features/auth';
-import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import { useAppSelector } from 'hooks';
-import { db } from 'lib/firebase';
 import React, { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { Link } from 'react-router-dom';
-import { getOnlyOneUser, getUserSuggestion } from 'services';
+import { followUser, getUserSuggestion } from 'services';
 import { IUser } from 'shared';
 
 const Sidebar = () => {
@@ -15,17 +13,10 @@ const Sidebar = () => {
       useState<boolean>(false);
    const [imgUserLoading, setImgUserLoading] = useState<boolean>(true);
    const { user } = useAppSelector(authSelector);
+
    const handleFollowUser = async (userId: string) => {
-      if (user?.docId) {
-         updateDoc(doc(db, 'users', user.docId), {
-            following: arrayUnion(userId),
-         });
-
-         const _oneUser = (await getOnlyOneUser('userId', userId)) as IUser;
-
-         updateDoc(doc(db, 'users', _oneUser.docId as string), {
-            followers: arrayUnion(user.docId as string),
-         });
+      if (user && user?.docId) {
+         await followUser(userId, user);
          setSuggestionUser((suggestionUser) =>
             [...suggestionUser].filter((_user) => _user.userId !== userId)
          );

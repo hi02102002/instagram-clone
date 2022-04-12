@@ -1,5 +1,5 @@
 .message-wrap {
-   @apply flex items-center gap-x-3 flex-1;
+   @apply flex items-center gap-x-3 flex-1 relative;
 }
 
 .message-wrap:hover .action {
@@ -28,11 +28,6 @@
 
 .message-wrap.isRight .message-content {
    @apply bg-gray-100;
-}
-
-.tooltip-wrap,
-.reaction-wrap {
-   @apply relative;
 }
 
 .tooltip-wrap .tooltip,

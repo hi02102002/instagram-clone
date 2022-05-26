@@ -1,4 +1,3 @@
-import Layout from 'components/Layout';
 import { authSelector } from 'features/auth';
 import {
    conversationSelector,
@@ -20,7 +19,7 @@ const Chat = () => {
 
    useEffect(() => {
       if (user?.userId && user.username) {
-         dispatch(subscribeConversations(user.userId, user.username));
+         dispatch(subscribeConversations(user.userId));
       }
    }, [user, dispatch]);
 
@@ -37,31 +36,29 @@ const Chat = () => {
    }, [currentConversation, navigate]);
 
    return (
-      <Layout>
-         <div className="flex  w-full my-6 h-[calc(100vh_-_(var(--header-height)_+_2_*_24px))]">
-            <div className="flex w-full bg-white rounded border border-solid border-border-color">
-               {width < 1024 && !currentConversation ? (
-                  <div className=" flex-shrink-0 w-full">
+      <div className="flex  w-full my-6 h-[calc(100vh_-_(var(--header-height)_+_2_*_24px))]">
+         <div className="flex w-full bg-white rounded border border-solid border-border-color">
+            {width < 1024 && !currentConversation ? (
+               <div className=" flex-shrink-0 w-full">
+                  <Sidebar />
+               </div>
+            ) : width < 1024 && currentConversation ? (
+               <div className="flex-1 w-full ">
+                  <ChatView />
+               </div>
+            ) : null}
+            {width >= 1024 && (
+               <>
+                  <div className="w-[350px] flex-shrink-0">
                      <Sidebar />
                   </div>
-               ) : width < 1024 && currentConversation ? (
                   <div className="flex-1 w-full ">
                      <ChatView />
                   </div>
-               ) : null}
-               {width >= 1024 && (
-                  <>
-                     <div className="w-[350px] flex-shrink-0">
-                        <Sidebar />
-                     </div>
-                     <div className="flex-1 w-full ">
-                        <ChatView />
-                     </div>
-                  </>
-               )}
-            </div>
+               </>
+            )}
          </div>
-      </Layout>
+      </div>
    );
 };
 

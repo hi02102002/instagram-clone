@@ -1,4 +1,5 @@
 import ButtonLoginGoogle from 'components/ButtonLoginGoogle';
+import { ROUTES } from 'constant';
 import { authSelector } from 'features/auth';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useAppSelector, useIsMounted } from 'hooks';
@@ -114,7 +115,7 @@ export const Login = () => {
                   </div>
                   <ButtonLoginGoogle />
                   <Link
-                     to="forgot-password"
+                     to={ROUTES.forgetPassword}
                      className="text-blue-color block text-center hover:underline"
                   >
                      You forgot the password?
@@ -122,9 +123,9 @@ export const Login = () => {
                </div>
                <div className=" bg-white border border-solid border-border-color rounded px-10 py-6 ">
                   <div className="flex gap-x-[6px] justify-center">
-                     <p>You don’t an account?</p>
+                     <p>You don't an account?</p>
                      <Link
-                        to="/sign-up"
+                        to={ROUTES.signUp}
                         className="text-blue-color hover:underline font-medium "
                      >
                         Sign up

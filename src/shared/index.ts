@@ -75,8 +75,7 @@ export interface IConversation {
 
    _userDeleted: string[];
    _member: {
-      _avatar: string;
-      _username: string;
+      _userId: string;
    }[];
    _createdAt: string;
 }

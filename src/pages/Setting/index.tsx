@@ -1,5 +1,4 @@
 import Avatar from 'components/Avatar';
-import Layout from 'components/Layout';
 import { authSelector } from 'features/auth';
 import { updateUser } from 'features/auth/authAction';
 import { sendPasswordResetEmail } from 'firebase/auth';
@@ -195,7 +194,6 @@ const Setting = () => {
    }, [activeTab]);
 
    return (
-      <Layout>
          <div className="py-6 ">
             <div className="bg-white rounded overflow-hidden border-b border-border-color  ">
                <div className="flex flex-col md:flex-row ">
@@ -409,7 +407,6 @@ const Setting = () => {
                </div>
             </div>
          </div>
-      </Layout>
    );
 };
 

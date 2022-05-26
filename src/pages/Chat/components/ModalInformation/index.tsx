@@ -3,9 +3,10 @@ import ModalWrap from 'components/ModalWrap';
 import { authSelector } from 'features/auth';
 import { useAppSelector, useClickOutside } from 'hooks';
 import React from 'react';
+import { IUser } from 'shared';
 
 interface Props {
-   members: any[];
+   members: IUser[];
    onClose: () => void;
    onRemove: () => void;
 }
@@ -22,21 +23,21 @@ const ModalInformation: React.FC<Props> = ({ members, onClose, onRemove }) => {
             <div>
                <div className="flex flex-col gap-y-3 py-2 px-4 border-b border-solid border-border-color">
                   <h3 className="font-medium text-base">Members</h3>
-                  <ul className="flex flex-col">
+                  <ul className="flex flex-col gap-y-2">
                      {members.map(
                         (_member) =>
-                           _member._username !== user?.username && (
+                           _member.username !== user?.username && (
                               <li
-                                 key={_member._username}
+                                 key={_member.username}
                                  className="flex items-center gap-x-3"
                               >
                                  <Avatar
-                                    src={_member._avatar}
+                                    src={_member.avatar}
                                     alt=""
                                     className="w-14 h-14"
                                  />
                                  <h4 className="font-medium">
-                                    {_member._username}
+                                    {_member.username}
                                  </h4>
                               </li>
                            )

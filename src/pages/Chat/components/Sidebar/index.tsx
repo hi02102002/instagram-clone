@@ -5,8 +5,9 @@ import { selectConversation } from 'features/conversations';
 import { conversationSelector } from 'features/conversations/conversationsSlice';
 import { useAppDispatch, useAppSelector, useIsMounted } from 'hooks';
 import { IMAGES } from 'images';
-import React, { useState } from 'react';
-import { IMessageType } from 'shared';
+import React, { useEffect, useState } from 'react';
+import { getMemberInConversation } from 'services/getMemberInConversation';
+import { IConversation, IMessageType, IUser } from 'shared';
 import { getConversationName } from 'utils';
 import ModalCreateConversation from '../ModalCreateConversation';
 
@@ -78,7 +79,6 @@ const Sidebar = () => {
          <div className="h-full border-r border-solid border-border-color overflow-y-auto">
             <ul>
                {conversations.map((conversation) => {
-                  const _type = conversation._lastMessage?._type;
                   return (
                      <li
                         key={conversation._conversationId}
@@ -91,50 +91,10 @@ const Sidebar = () => {
                            }
                         }}
                      >
-                        <div
-                           className={`flex items-center gap-x-3 py-2 px-5 cursor-pointer hover:bg-gray-200 transition-[background-color] ${
-                              currentConversation?._conversationId ===
-                              conversation._conversationId
-                                 ? 'bg-gray-200'
-                                 : ''
-                           } w-full`}
-                        >
-                           <Avatar
-                              src={IMAGES.noAvatar}
-                              alt=""
-                              className="w-14 h-14"
-                           />
-                           <div className="flex flex-col gap-y-1 w-full">
-                              <h4 className="font-medium text-text-color-black line-clamp-1">
-                                 {getConversationName(
-                                    conversation._member,
-                                    user?.username as string
-                                 )}
-                              </h4>
-                              {conversation._lastMessage && (
-                                 <div className="text-text-color-gray w-full flex items-center gap-x-1  ">
-                                    <span className="line-clamp-1 max-w-[80px]">
-                                       {_type === IMessageType.FILE
-                                          ? 'File'
-                                          : _type === IMessageType.IMG_ICON
-                                          ? 'Icon'
-                                          : conversation._lastMessage._message}
-                                    </span>
-                                    <span>-</span>
-                                    <span>
-                                       {formatDistance(
-                                          new Date(
-                                             conversation._lastMessage
-                                                ?._createAt as string
-                                          ),
-                                          new Date(),
-                                          { addSuffix: true }
-                                       )}
-                                    </span>
-                                 </div>
-                              )}
-                           </div>
-                        </div>
+                        <SidebarItem
+                           conversation={conversation}
+                           type={conversation._lastMessage?._type as string}
+                        />
                      </li>
                   );
                })}
@@ -149,6 +109,66 @@ const Sidebar = () => {
                }}
             />
          )}
+      </div>
+   );
+};
+
+interface SidebarItemProps {
+   conversation: IConversation;
+   type: string;
+}
+
+const SidebarItem: React.FC<SidebarItemProps> = ({ conversation, type }) => {
+   const { currentConversation } = useAppSelector(conversationSelector);
+   const [members, setMembers] = useState<IUser[]>([]);
+   const { user } = useAppSelector(authSelector);
+
+   useEffect(() => {
+      getMemberInConversation(conversation._member)
+         .then((members) => {
+            setMembers(members as IUser[]);
+         })
+         .catch((error) => {
+            console.log(error);
+         });
+   }, [conversation._member]);
+
+   return (
+      <div
+         className={`flex items-center gap-x-3 py-2 px-5 cursor-pointer hover:bg-gray-200 transition-[background-color] ${
+            currentConversation?._conversationId ===
+            conversation._conversationId
+               ? 'bg-gray-200'
+               : ''
+         } w-full`}
+      >
+         <Avatar src={IMAGES.noAvatar} alt="" className="w-14 h-14" />
+         <div className="flex flex-col gap-y-1 w-full">
+            <h4 className="font-medium text-text-color-black line-clamp-1">
+               {getConversationName(members, user?.username as string)}
+            </h4>
+            {conversation._lastMessage && (
+               <div className="text-text-color-gray w-full flex items-center gap-x-1  ">
+                  <span className="line-clamp-1 max-w-[80px]">
+                     {type === IMessageType.FILE
+                        ? 'File'
+                        : type === IMessageType.IMG_ICON
+                        ? 'Icon'
+                        : conversation._lastMessage._message}
+                  </span>
+                  <span>-</span>
+                  <span>
+                     {formatDistance(
+                        new Date(
+                           conversation._lastMessage?._createAt as string
+                        ),
+                        new Date(),
+                        { addSuffix: true }
+                     )}
+                  </span>
+               </div>
+            )}
+         </div>
       </div>
    );
 };

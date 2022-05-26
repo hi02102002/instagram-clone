@@ -31,8 +31,9 @@ const ModalCreateConversation: React.FC<Props> = ({ onClose }) => {
    const [userFollowing, setUserFollowing] = useState<IUser[]>([]);
    const [userChooseTag, setUserChooseTag] = useState<
       {
-         _avatar: string;
-         _username: string;
+         _userId: string;
+         _userAvatar: string;
+         _userName: string;
       }[]
    >([]);
    const [loading, setLoading] = useState<boolean>(false);
@@ -42,10 +43,13 @@ const ModalCreateConversation: React.FC<Props> = ({ onClose }) => {
          return;
       }
       const _member = [
-         ...userChooseTag,
+         ...userChooseTag.map((_user) => {
+            return {
+               _userId: _user._userId,
+            };
+         }),
          {
-            _avatar: user?.avatar as string,
-            _username: user?.username as string,
+            _userId: user?.userId as string,
          },
       ];
       const data = await getDocs(query(collection(db, 'conversations')));
@@ -130,16 +134,16 @@ const ModalCreateConversation: React.FC<Props> = ({ onClose }) => {
                <div className="">
                   <ul className="flex items-center flex-wrap gap-3 overflow-auto max-h-18 line-  py-2 pr-4">
                      {userChooseTag.map((_user) => (
-                        <li key={_user._username}>
+                        <li key={_user._userId}>
                            <div className="flex items-center gap-x-1 bg-blue-color text-white px-1 py-1 rounded">
-                              <span>{_user._username}</span>
+                              <span>{_user._userName}</span>
                               <button
                                  onClick={(e) => {
                                     e.stopPropagation();
                                     setUserChooseTag((_userChoose) =>
                                        [..._userChoose].filter(
                                           (item) =>
-                                             item._username !== _user._username
+                                             item._userId !== _user._userId
                                        )
                                     );
                                  }}
@@ -164,7 +168,7 @@ const ModalCreateConversation: React.FC<Props> = ({ onClose }) => {
                               onClick={() => {
                                  const _userExist = userChooseTag.find(
                                     (_userChoose) =>
-                                       _userChoose._username === _user.username
+                                       _userChoose._userId === _user.userId
                                  );
                                  if (_userExist) {
                                     setUserChooseTag((_userChoose) =>
@@ -176,8 +180,9 @@ const ModalCreateConversation: React.FC<Props> = ({ onClose }) => {
                                     setUserChooseTag((_userChoose) => [
                                        ..._userChoose,
                                        {
-                                          _avatar: _user.avatar,
-                                          _username: _user.username,
+                                          _userId: _user.userId,
+                                          _userAvatar: _user.avatar,
+                                          _userName: _user.username,
                                        },
                                     ]);
                                  }

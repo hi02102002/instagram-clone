@@ -1,12 +1,11 @@
-import Layout from 'components/Layout';
 import Post from 'components/Post';
 import { postsSelector, subscribePosts, unmountPosts } from 'features/posts';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { db } from 'lib/firebase';
 import React, { useEffect, useRef, useState } from 'react';
-import Sidebar from './components/Sidebar';
 import SkeletonPost from '../../components/SkeletonPost';
+import Sidebar from './components/Sidebar';
 
 let _left: number | undefined;
 
@@ -51,40 +50,39 @@ const Home = () => {
    }, [dispatch]);
 
    return (
-      <Layout>
-         <div className="mt-6">
-            <main className="flex gap-x-7 justify-center">
-               <div
-                  className="w-full max-w-[37.5rem] flex flex-col gap-y-6 lg:mr-auto"
-                  ref={postsRef}
-               >
-                  {loading
-                     ? [...new Array(3)].map((item, index) => (
-                          <SkeletonPost key={index} />
-                       ))
-                     : dataPosts.map((post) => (
-                          <Post
-                             key={post.postId}
-                             post={post}
-                             onRemove={removePost}
-                          />
-                       ))}
+      <div className="mt-6">
+         <main className="flex gap-x-7 justify-center">
+            <div
+               className="w-full max-w-[37.5rem] flex flex-col gap-y-6 lg:mr-auto"
+               ref={postsRef}
+            >
+               {loading
+                  ? [...new Array(3)].map((item, index) => (
+                       <SkeletonPost key={index} />
+                    ))
+                  : dataPosts.map((post) => (
+                       <Post
+                          key={post.postId}
+                          post={post}
+                          onRemove={removePost}
+                          type="post"
+                       />
+                    ))}
 
-                  {dataPosts.length === 0 && (
-                     <p className="text-xl text-center text-text-color-black">
-                        Following user to see post.
-                     </p>
-                  )}
-               </div>
-               <div
-                  className={`fixed top-[calc(var(--header-height)_+_24px)] w-full max-w-[293px] hidden lg:block`}
-                  style={{ left: `${leftSidebar}px` }}
-               >
-                  <Sidebar />
-               </div>
-            </main>
-         </div>
-      </Layout>
+               {dataPosts.length === 0 && (
+                  <p className="text-xl text-center text-text-color-black">
+                     Following user to see post.
+                  </p>
+               )}
+            </div>
+            <div
+               className={`fixed top-[calc(var(--header-height)_+_24px)] w-full max-w-[293px] hidden lg:block`}
+               style={{ left: `${leftSidebar}px` }}
+            >
+               <Sidebar />
+            </div>
+         </main>
+      </div>
    );
 };
 

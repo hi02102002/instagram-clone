@@ -27,7 +27,8 @@ import { IoIosArrowBack } from 'react-icons/io';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getConversation } from 'services';
-import { IMessage } from 'shared';
+import { getMemberInConversation } from 'services/getMemberInConversation';
+import { IMessage, IUser } from 'shared';
 import { getConversationName } from 'utils';
 import InputMessage from '../InputMessage';
 import Message from '../Message';
@@ -51,6 +52,7 @@ const ChatView = () => {
    const messagesEndRef = useRef<HTMLDivElement>(null);
    const dispatch = useAppDispatch();
    const navigate = useNavigate();
+   const [members, setMembers] = useState<IUser[]>([]);
 
    const removeHandle = async () => {
       navigate('/chat', {
@@ -119,6 +121,18 @@ const ChatView = () => {
       setCount(LIMITED_CHAT);
    }, [currentConversation]);
 
+   useEffect(() => {
+      if (currentConversation) {
+         getMemberInConversation(currentConversation?._member)
+            .then((members) => {
+               setMembers(members as IUser[]);
+            })
+            .catch((error) => {
+               console.log(error);
+            });
+      }
+   }, [currentConversation]);
+
    return (
       <div className=" flex flex-col h-full animate-fadeIn">
          {!currentConversation ? (
@@ -152,10 +166,7 @@ const ChatView = () => {
                      <h4 className="font-medium text-text-color-black max-w-[200px] line-clamp-1">
                         {currentConversation &&
                            user &&
-                           getConversationName(
-                              currentConversation._member,
-                              user.username
-                           )}
+                           getConversationName(members, user.userId)}
                      </h4>
                   </div>
                   <button onClick={() => setShowModalInformation(true)}>
@@ -216,7 +227,7 @@ const ChatView = () => {
          )}
          {showModalInformation && (
             <ModalInformation
-               members={currentConversation?._member as any}
+               members={members}
                onClose={() => {
                   if (showModalConfirm) {
                      return;

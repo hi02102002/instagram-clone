@@ -1,30 +1,30 @@
+import { IUser } from 'shared';
+
 export const uppercaseFirstLetter = (str: string) => {
    return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 export const getConversationName = (
-   members: { _avatar: string; _username: string }[],
-   currentUsername: string
+   members: IUser[],
+   currentUserId: string
 ): string => {
    if (members.length === 2) {
-      return members.find((_member) => _member._username !== currentUsername)
-         ?._username as string;
+      return members.find((_member) => _member.userId !== currentUserId)
+         ?.username as string;
    }
    return members
       .map((_member) =>
-         _member._username === currentUsername ? 'You' : _member._username
+         _member.userId === currentUserId ? 'You' : _member.username
       )
       .join(', ');
 };
 
 export const compareArrMember = (
    members1: {
-      _avatar: string;
-      _username: string;
+      _userId: string;
    }[],
    members2: {
-      _avatar: string;
-      _username: string;
+      _userId: string;
    }[]
 ) => {
    if (
@@ -35,14 +35,14 @@ export const compareArrMember = (
       return false;
    }
    const members1Sorted = [...members1].sort((a, b) =>
-      a._username.localeCompare(b._username)
+      a._userId.localeCompare(b._userId)
    );
    const members2Sorted = [...members2].sort((a, b) =>
-      a._username.localeCompare(b._username)
+      a._userId.localeCompare(b._userId)
    );
 
    for (let i = 0; i < members1Sorted.length; i++) {
-      if (members1Sorted[i]._username !== members2Sorted[i]._username) {
+      if (members1Sorted[i]._userId !== members2Sorted[i]._userId) {
          return false;
       }
    }

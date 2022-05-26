@@ -4,7 +4,6 @@ import { IPost } from 'shared';
 import { v4 as uuid } from 'uuid';
 export const addComment = (
    textComment: string,
-   username: string,
    userId: string,
    post: IPost
 ) => {
@@ -15,7 +14,6 @@ export const addComment = (
       ...post._userComments,
       {
          _id: uuid(),
-         _username: username,
          _content: textComment,
          _userId: userId,
       },

@@ -1,6 +1,9 @@
+import Layout from 'components/Layout';
 import RequireAuth from 'components/RequireAuth';
+import { ROUTES } from 'constant';
 import { Login, Register } from 'pages/Auth';
 import Chat from 'pages/Chat';
+import ForgetPassword from 'pages/FogetPassword';
 import Home from 'pages/Home';
 import Posts from 'pages/Post';
 import Profile from 'pages/Profile';
@@ -13,56 +16,24 @@ function App() {
       <div className="App">
          <Routes>
             <Route
-               path="/"
+               path={ROUTES.home}
                element={
                   <RequireAuth>
-                     <Home />
-                  </RequireAuth>
-               }
-            />
-            <Route
-               path="/:_userId"
-               element={
-                  <RequireAuth>
-                     <Profile />
-                  </RequireAuth>
-               }
-            />
-            <Route
-               path="/chat"
-               element={
-                  <RequireAuth>
-                     <Chat />
+                     <Layout />
                   </RequireAuth>
                }
             >
-               <Route
-                  path="/chat/:conversationId"
-                  element={
-                     <RequireAuth>
-                        <Chat />
-                     </RequireAuth>
-                  }
-               ></Route>
+               <Route index element={<Home />} />
+               <Route path={ROUTES.profile} element={<Profile />} />
+               <Route path={ROUTES.chat} element={<Chat />}>
+                  <Route path={ROUTES.conversation} element={<Chat />} />
+               </Route>
+               <Route path={ROUTES.setting} element={<Setting />} />
+               <Route path={ROUTES.post} element={<Posts />} />
             </Route>
-            <Route
-               path="/p/:_postId"
-               element={
-                  <RequireAuth>
-                     <Posts />
-                  </RequireAuth>
-               }
-            />
-            <Route
-               path="/setting"
-               element={
-                  <RequireAuth>
-                     <Setting />
-                  </RequireAuth>
-               }
-            />
             <Route path="/login" element={<Login />} />
             <Route path="/sign-up" element={<Register />} />
+            <Route path={ROUTES.forgetPassword} element={<ForgetPassword />} />
          </Routes>
       </div>
    );

@@ -22,9 +22,10 @@ interface Props {
    post: IPost;
    onRemove?: (postId: string, docId: string) => any;
    direction?: 'vertical' | 'horizontal';
+   type?: 'post';
 }
 
-const Post: React.FC<Props> = ({ post, onRemove, direction }) => {
+const Post: React.FC<Props> = ({ post, onRemove, direction, type }) => {
    const [isLiked, setIsLiked] = useState<boolean>(false);
    const [textInputComment, setTextInputComment] = useState<string>('');
    const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false);
@@ -53,12 +54,7 @@ const Post: React.FC<Props> = ({ post, onRemove, direction }) => {
 
    const handleAddComment = useCallback(() => {
       if (currentUser) {
-         addComment(
-            textInputComment,
-            currentUser.username,
-            currentUser.userId,
-            post
-         );
+         addComment(textInputComment, currentUser.userId, post);
       }
       setTextInputComment('');
    }, [currentUser, textInputComment, post]);
@@ -132,54 +128,55 @@ const Post: React.FC<Props> = ({ post, onRemove, direction }) => {
                      </div>
                   </div>
                )}
-
-               <div className="relative">
-                  <button
-                     onClick={(e) => {
-                        e.stopPropagation();
-                        setIsShowDropdown(!isShowDropdown);
-                     }}
-                  >
-                     <HiOutlineDotsHorizontal className="w-6 h-6 text-text-color-gray" />
-                  </button>
-                  {isShowDropdown && (
-                     <div
-                        className="absolute z-40 animate-slideInUp top-[40px] md:left-[-40px] left-[-105px]"
-                        ref={dropdownRef}
+               {type === 'post' && (
+                  <div className="relative">
+                     <button
+                        onClick={(e) => {
+                           e.stopPropagation();
+                           setIsShowDropdown(!isShowDropdown);
+                        }}
                      >
-                        <div className=" bg-white rounded-lg py-2 w-40 shadow-box-shadow">
-                           {post._user._userId === currentUser?.userId && (
+                        <HiOutlineDotsHorizontal className="w-6 h-6 text-text-color-gray" />
+                     </button>
+                     {isShowDropdown && (
+                        <div
+                           className="absolute z-40 animate-slideInUp top-[40px] md:left-[-40px] left-[-105px]"
+                           ref={dropdownRef}
+                        >
+                           <div className=" bg-white rounded-lg py-2 w-40 shadow-box-shadow">
+                              {post._user._userId === currentUser?.userId && (
+                                 <button
+                                    className="flex items-center gap-x-[10px] px-4 py-2 hover:bg-gray-200 transition-all w-full"
+                                    onClick={(e) => {
+                                       e.stopPropagation();
+
+                                       setIsShowModal(true);
+                                       setIsShowDropdown(false);
+                                    }}
+                                 >
+                                    <IoMdRemoveCircleOutline className="w-4 h-4" />
+                                    <span className="text-text-color-black font-medium">
+                                       Remove
+                                    </span>
+                                 </button>
+                              )}
+
                               <button
                                  className="flex items-center gap-x-[10px] px-4 py-2 hover:bg-gray-200 transition-all w-full"
                                  onClick={(e) => {
                                     e.stopPropagation();
-
-                                    setIsShowModal(true);
-                                    setIsShowDropdown(false);
                                  }}
                               >
-                                 <IoMdRemoveCircleOutline className="w-4 h-4" />
+                                 <MdOutlineReportGmailerrorred className="w-4 h-4" />
                                  <span className="text-text-color-black font-medium">
-                                    Remove
+                                    Report
                                  </span>
                               </button>
-                           )}
-
-                           <button
-                              className="flex items-center gap-x-[10px] px-4 py-2 hover:bg-gray-200 transition-all w-full"
-                              onClick={(e) => {
-                                 e.stopPropagation();
-                              }}
-                           >
-                              <MdOutlineReportGmailerrorred className="w-4 h-4" />
-                              <span className="text-text-color-black font-medium">
-                                 Report
-                              </span>
-                           </button>
+                           </div>
                         </div>
-                     </div>
-                  )}
-               </div>
+                     )}
+                  </div>
+               )}
             </div>
             <div className="relative aspect-square">
                <div className="w-full h-full">

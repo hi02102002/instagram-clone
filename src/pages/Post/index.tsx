@@ -1,4 +1,3 @@
-import Layout from 'components/Layout';
 import Post from 'components/Post';
 import SkeletonPost from 'components/SkeletonPost';
 import {
@@ -59,15 +58,13 @@ const Posts = () => {
    }, [width]);
 
    return (
-      <Layout>
-         <div className="py-6">
-            {loading && !post ? (
-               <SkeletonPost direction={direction} />
-            ) : (
-               post && <Post post={post as IPost} direction={direction} />
-            )}
-         </div>
-      </Layout>
+      <div className="py-6">
+         {loading && !post ? (
+            <SkeletonPost direction={direction} />
+         ) : (
+            post && <Post post={post as IPost} direction={direction} />
+         )}
+      </div>
    );
 };
 

@@ -1,4 +1,5 @@
 import ButtonLoginGoogle from 'components/ButtonLoginGoogle';
+import { ROUTES } from 'constant';
 import { authSelector } from 'features/auth';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useFormik } from 'formik';
@@ -83,7 +84,7 @@ export const Register = React.memo(() => {
 
    useEffect(() => {
       if (currentUser) {
-         navigate('/', {
+         navigate(ROUTES.home, {
             replace: true,
          });
       }
@@ -241,7 +242,7 @@ export const Register = React.memo(() => {
                   <div className="flex gap-x-[6px] justify-center">
                      <p>You may already have an account?</p>
                      <Link
-                        to="/login"
+                        to={ROUTES.login}
                         className="text-blue-color hover:underline font-medium "
                      >
                         Login

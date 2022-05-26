@@ -7,8 +7,7 @@ export const fetchLoadingActions =
    createLoadingActions<IConversation[]>('fetchConversations');
 
 export const subscribeConversations =
-   (userId: string, username: string) =>
-   async (dispatch: Dispatch<PayloadAction<any>>) => {
+   (userId: string) => async (dispatch: Dispatch<PayloadAction<any>>) => {
       dispatch(fetchLoadingActions.pending());
       if (userId) {
          const q = query(collection(db, 'conversations'));
@@ -22,7 +21,7 @@ export const subscribeConversations =
                })
                .filter((conversation) => {
                   const isMember = conversation._member.some(
-                     (_member) => _member._username === username
+                     (_member) => _member._userId === userId
                   );
                   const isDeleted = conversation._userDeleted.some(
                      (_userId) => _userId === userId

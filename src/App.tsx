@@ -1,19 +1,21 @@
 import Layout from 'components/Layout';
 import RequireAuth from 'components/RequireAuth';
 import { ROUTES } from 'constant';
-import { Login, Register } from 'pages/Auth';
+import { ForgetPassword, Login, Register } from 'pages/Auth';
 import Chat from 'pages/Chat';
-import ForgetPassword from 'pages/FogetPassword';
 import Home from 'pages/Home';
 import Posts from 'pages/Post';
 import Profile from 'pages/Profile';
 import Setting from 'pages/Setting';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
    return (
       <div className="App">
+         <ToastContainer />
          <Routes>
             <Route
                path={ROUTES.home}
